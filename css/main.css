@@ -5,10 +5,8 @@ h1{
 }
 .navbar{
     height: 100px;    
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-around;
+    width: 700px;
+    margin: auto;
 }
 
 #my-canvas{
@@ -21,14 +19,38 @@ h1{
 .icon.selected{
     background-color: yellow;
 }
+.pen-size.selected{
+    color: red;
+}
 .icon{
     height: 50px;
     width: 50px;
-    background-color: aqua;
     
+}
+#line{
+    background-image: url(https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Pipe.svg/768px-Pipe.svg.png);
+    background-size: cover;
 }
 
 #rectangle{
     
     background-image: url(http://www.kidsmathgamesonline.com/images/pictures/shapes120/square120.jpg);
+    background-size: cover;
+}
+
+#circle{
+    background-image: url(https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Circle_-_black_simple.svg/500px-Circle_-_black_simple.svg.png);
+    background-size: cover;
+}
+
+#pencil{
+    background-image: url(https://image.freepik.com/free-vector/writting-pencil-design_1095-187.jpg);
+    background-size: cover;
+}
+#text{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 20px;
+}
+#color{
+    background-color: black;
 }
