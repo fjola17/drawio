@@ -16,12 +16,6 @@ h1{
     border: solid;
 }
 
-.icon.selected{
-    background-color: yellow;
-}
-.pen-size.selected{
-    color: red;
-}
 .icon{
     height: 50px;
     width: 50px;
@@ -53,4 +47,13 @@ h1{
 }
 #color{
     background-color: black;
+    width: 30px;
+    height: 30px;
+}
+.color{
+    width: 100px;
+    height: 30px;
+}
+.selected{
+    border: solid yellow;
 }

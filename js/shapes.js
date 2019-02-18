@@ -11,10 +11,11 @@ Shape.prototype.move = function(position){
 
 Shape.prototype.resize = function(){};
 
-function Rectangle(position, width, height){
+function Rectangle(position, width, height, strokeStyle){
     Shape.call(this, position);
     this.width = width;
     this.height = height;
+    this.strokeStyle = strokeStyle;
 };
 
 //assign the prototype
@@ -23,6 +24,8 @@ Rectangle.prototype.constructor = Rectangle;
 
 Rectangle.prototype.render = function(){
     //render a rectangle
+    //console.log(this.strokeStyle)
+    drawio.ctx.fillStyle = this.strokeStyle;
     drawio.ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
 };
 Rectangle.prototype.resize = function(x, y){
@@ -31,11 +34,12 @@ Rectangle.prototype.resize = function(x, y){
 }
 
 
-function Line(position, x1, y1, col, lineWidth){
-    Shape.call(this, position, col);
+function Line(position, x1, y1, strokeStyle, lineWidth){
+    Shape.call(this, position, strokeStyle);
     this.x1 = x1;
     this.y1 = y1;
     this.shape = "line";
+    this.strokeStyle = strokeStyle;
     this.lineWidth = lineWidth;
 }
 
@@ -45,6 +49,8 @@ Line.prototype.constructor = Line;
 Line.prototype.render = function(){
    // console.log(context);
     drawio.ctx.beginPath();
+    drawio.ctx.strokeStyle = this.strokeStyle;
+    drawio.ctx.lineWidth = this.lineWidth;
     drawio.ctx.moveTo(this.position.x, this.position.y);
     drawio.ctx.lineTo(this.x1, this.y1);
     
@@ -54,4 +60,39 @@ Line.prototype.render = function(){
 Line.prototype.resize = function(x,y){
     this.x1 = x;
     this.y1 = y;    
+}
+
+function Pencil(position, shapearr, strokeStyle, lineWidth){
+  //  console.log(strokeStyle);
+    Shape.call(this, position);
+    this.strokeStyle = strokeStyle;
+    this.lineWidth = lineWidth;
+    var pos = [this.position.x, this.position.y];
+    this.shapearr = shapearr;
+    this.shapearr.push(pos);   
+}
+Pencil.prototype = Object.create(Shape.prototype);
+Pencil.prototype.constructor = Pencil;
+
+Pencil.prototype.render = function(){
+    //console.log(this.strokeStyle, this.lineWidth);
+    for(let i = 1; i < this.shapearr.length; i++){
+        drawio.ctx.beginPath();
+        drawio.ctx.strokeStyle = this.strokeStyle;
+        drawio.ctx.lineWidth = this.lineWidth;
+        drawio.ctx.moveTo(this.shapearr[i-1][0], this.shapearr[i-1][1]);
+        drawio.ctx.lineTo(this.shapearr[i][0], this.shapearr[i][1]);
+        
+        drawio.ctx.stroke();
+        drawio.ctx.closePath();
+    }
+    
+        
+}
+Pencil.prototype.resize = function(x, y){
+    this.position.x = x;
+    this.position.y = y;
+    var pos = [this.position.x, this.position.y]
+    this.shapearr.push(pos);
+    //console.log(pos);
 }
