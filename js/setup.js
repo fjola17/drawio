@@ -8,6 +8,7 @@ window.drawio = {
         RECTANGLE : "rectangle",
         PENCIL : "pencil",
         LINE : "line",
-        TEXT : "text"
+        TEXT : "text",
+        CIRCLE : "circle"
     }
 };

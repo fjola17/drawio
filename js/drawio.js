@@ -14,7 +14,8 @@ $(function(){
     $('.icon').on('click', function(){
         $('.icon').removeClass('selected');
         $(this).addClass('selected');
-        drawio.selectedShape = $(this).data('shape');  
+        drawio.selectedShape = $(this).data('shape');
+        console.log(drawio.selectedShape);
     });
     $("#reset").on("click", function(){
         drawio.ctx.clearRect(0,0, drawio.canvas.width, drawio.canvas.height);
@@ -37,13 +38,13 @@ $(function(){
                 console.log("Pencil: NOT DONE YET");
                 break;
             case drawio.availableShapes.CIRCLE:
-                console.log("Circle: Not done yet");
+                drawio.selectedElement = new Circle({ x: mouseEvent.offsetX, y: mouseEvent.offsetY }, 0);
                 break;
             case drawio.availableShapes.LINE:
-                drawio.selectedElement = new Line({x: mouseEvent.offsetX, y: mouseEvent.offsetY}, 0, 0);
+                drawio.selectedElement = new Line({ x: mouseEvent.offsetX, y: mouseEvent.offsetY}, 0, 0);
                 break;
             case drawio.availableShapes.TEXT:
-                console.log("TEXT: blablabla");
+                drawio.selectedElement = new Text({ x: mouseEvent.offsetX, y: mouseEvent.offsetY}, 0, 0);
                 break;
         }
     });

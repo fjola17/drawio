@@ -49,6 +49,54 @@ Line.prototype.render = function(context){
     drawio.ctx.stroke();
 }
 Line.prototype.resize = function(context){
-   /* this.col = x - 
+   /* this.col = x -
     this.lineWidth = */
 }
+
+
+
+function Circle(position, rad){
+    Shape.call(this, position);
+    this.rad = rad;
+}
+
+Circle.prototype = Object.create(Shape.prototype);
+Circle.prototype.constructor = Circle;
+
+Circle.prototype.render = function(){
+    //render a circle
+    drawio.ctx.beginPath();
+    drawio.ctx.arc(this.position.x, this.position.y, this.rad, 0, Math.PI * 2);
+    drawio.ctx.fill();
+    drawio.ctx.closePath();
+};
+Circle.prototype.resize = function(x1, y1){
+    this.rad = Math.sqrt(Math.pow((x1 - this.position.x), 2) + Math.pow((y1 - this.position.y), 2));
+}
+
+function Text(position, width, height){
+    Shape.call(this, position);
+    this.width = width;
+    this.height = height;
+    this.textData = $('#text-shape').val();
+    this.textFont = $('#fontSize').val().concat(' ', $('#textFont').val());
+}
+
+Text.prototype = Object.create(Shape.prototype);
+Text.prototype.constructor = Text;
+
+Text.prototype.render = function(){
+    //render a text
+    //var textData = $('#text-shape').val();
+    //var textFont = $('#fontSize').val().concat(' ', $('#textFont').val());
+    drawio.ctx.font = this.textFont;
+    console.log(this.textFont);
+    drawio.ctx.fillText(this.textData, this.position.x, this.position.y)
+
+};/*
+Text.prototype.resize = function(x, y){
+
+    this.width = x - this.position.x;
+    this.height = y - this.position.y;
+
+}*/
