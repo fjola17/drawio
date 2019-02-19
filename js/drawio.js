@@ -32,7 +32,7 @@ $(function(){
     //delete everything off the canvas
     $("#reset").on("click", function(){
         drawio.ctx.clearRect(0,0, drawio.canvas.width, drawio.canvas.height);
-        drawio.shapes = [];
+        drawio.shapes.length = 0; //reset array
     });
     //resize the pen/line
     $(".pen-size").on("click", function(){
@@ -53,12 +53,22 @@ $(function(){
     
     //undo changes
     $("#undo").on("click", function(){
-        
+        var lastevent = drawio.shapes[drawio.shapes.length - 1];
+        drawio.shapes.pop();
+        drawio.redo.push(lastevent);
+        drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
+        drawCanvas();
     });
 
     //redo changes
-    $("redo").on("click", function(){
-        console.log("I do nothing");
+    $("#redo").on("click", function(){
+        var redoitem = drawio.redo[drawio.redo.length -1];
+        drawio.redo.pop();
+        if(redoitem != undefined){
+            drawio.shapes.push(redoitem);
+        drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
+        }        
+        drawCanvas();
     });
     //get mouse coordinates
     function getMouse(mouseEvent){
@@ -69,13 +79,11 @@ $(function(){
     //mousedown
     $('#my-canvas').on('mousedown', function(mouseEvent){
         var mouse = getMouse(mouseEvent)
-         
         switch(drawio.selectedShape){
             case drawio.availableShapes.RECTANGLE:
                 drawio.selectedElement = new Rectangle({ x: mouse.x, y: mouse.y }, 0, 0, color);
                 break;
-            case drawio.availableShapes.PENCIL:
-                
+            case drawio.availableShapes.PENCIL:                
                 drawing = true;
                 drawio.selectedElement = new Pencil({x: mouse.x, y: mouse.y}, [], color, size);
                 break;
@@ -83,7 +91,6 @@ $(function(){
                 console.log("Circle: Not done yet");
                 break;
             case drawio.availableShapes.LINE:
-            console.log("drawing a line");
                 drawio.selectedElement = new Line({x: mouse.x, y: mouse.y}, 0, 0, color, size);
                 break;
             case drawio.availableShapes.TEXT:
@@ -94,8 +101,6 @@ $(function(){
     //mosemove
     $('#my-canvas').on('mousemove', function(mouseEvent){
         var mouse = getMouse(mouseEvent) 
-        //color = drawio.ctx.strokeStyle,
-        //size = drawio.ctx.lineWidth;
         
         if(drawio.selectedElement){
             drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
@@ -108,18 +113,48 @@ $(function(){
     $('#my-canvas').on('mouseleave', function(mouseEvent){
         if(drawio.selectedElement != null){
             drawio.shapes.push(drawio.selectedElement);
-        drawio.selectedElement = null;
-        drawing = false;
-        dragging = false;
+            drawio.selectedElement = null;
+            drawing = false;
+            dragging = false;
+            drawio.redo.length = 0; //make it so it's not able to redo after a pen has been written
         }
         
     })
     //mouseup
     $('#my-canvas').on('mouseup', function(mouseEvent){
-        drawio.shapes.push(drawio.selectedElement);
-        drawio.selectedElement = null;
-        drawing = false;
-        dragging = false;
-        console.log(drawio.shapes);
-    })
+        if(drawio.selectedElement != null){
+            drawio.shapes.push(drawio.selectedElement);
+            drawio.selectedElement = null;
+            drawing = false;
+            dragging = false;
+            drawio.redo.length = 0; //make it so it's not able to redo after a pen has been written
+            drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
+            drawCanvas()
+        }
+    });
+    $("#save").on("click", function(){
+        console.log("I don't do anything yet");
+        myStorage = window.localStorage;
+        var content = JSON.stringify(drawio);
+        localStorage.setItem("image", content);
+    });
+
+    $("#load").on("click", function(){
+        console.log("I don't do anything yet");
+        myStorage = window.localStorage;
+        var canv = localStorage.getItem("image");
+        var values = JSON.parse(canv); //parse the json string from local storage
+        var item = values.shapes;
+        drawio.shapes.length = 0;
+        for(let i = 0; i < item.length; i++){
+            drawio.selectedShape = item[i].type;
+            redrawCanvas(item[i]);
+            drawio.shapes.push(drawio.selectedElement);
+            drawio.selectedElement = null;
+        }
+        drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
+        drawCanvas();
+        
+    });
+
 });
