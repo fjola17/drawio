@@ -10,6 +10,8 @@ window.drawio = {
         PENCIL : "pencil",
         CIRCLE : "circle",
         LINE : "line",
-        TEXT : "text"
+        TEXT : "text",
+        CIRCLE : "circle",
+        MOVE : "move"
     }
 };

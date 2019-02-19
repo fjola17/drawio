@@ -51,14 +51,58 @@ Line.prototype.render = function(){
     drawio.ctx.lineWidth = this.lineWidth;
     drawio.ctx.moveTo(this.position.x, this.position.y);
     drawio.ctx.lineTo(this.x1, this.y1);
-    
+
     drawio.ctx.closePath();
     drawio.ctx.stroke();
 }
+
 Line.prototype.resize = function(x,y){
     this.x1 = x;
-    this.y1 = y;    
+    this.y1 = y;
 }
+
+function Circle(position, rad, color){
+    Shape.call(this, position);
+    this.rad = rad;
+    this.color = color;
+    console.log(color);
+}
+
+Circle.prototype = Object.create(Shape.prototype);
+Circle.prototype.constructor = Circle;
+
+Circle.prototype.render = function(){
+    //render a circle
+    drawio.ctx.beginPath();
+    drawio.ctx.fillStyle = this.color;
+    drawio.ctx.arc(this.position.x, this.position.y, this.rad, 0, Math.PI * 2);
+    drawio.ctx.fill();
+    drawio.ctx.closePath();
+};
+Circle.prototype.resize = function(x1, y1){
+    //calculate radians from original position to current position
+    this.rad = Math.sqrt(Math.pow((x1 - this.position.x), 2) + Math.pow((y1 - this.position.y), 2));
+}
+
+function Text(position, width, height, color){
+    Shape.call(this, position);
+    this.width = width;
+    this.height = height;
+    this.color = color;
+    this.textData = $('#text-shape').val();
+    this.textFont = $('#fontSize').val().concat(' ', $('#textFont').val());
+}
+
+Text.prototype = Object.create(Shape.prototype);
+Text.prototype.constructor = Text;
+
+Text.prototype.render = function(){
+    drawio.ctx.fillStyle = this.color;
+    drawio.ctx.font = this.textFont;
+    console.log(this.textFont);
+    drawio.ctx.fillText(this.textData, this.position.x, this.position.y)
+
+};
 
 function Pencil(position, shapearr, strokeStyle, lineWidth){
     Shape.call(this, position);
@@ -67,7 +111,7 @@ function Pencil(position, shapearr, strokeStyle, lineWidth){
     this.type = "pencil";
     var pos = [this.position.x, this.position.y];
     this.shapearr = shapearr;
-    this.shapearr.push(pos);   
+    this.shapearr.push(pos);
 }
 Pencil.prototype = Object.create(Shape.prototype);
 Pencil.prototype.constructor = Pencil;
@@ -82,8 +126,8 @@ Pencil.prototype.render = function(){
         drawio.ctx.stroke();
         drawio.ctx.closePath();
     }
-    
-        
+
+
 }
 Pencil.prototype.resize = function(x, y){
     this.position.x = x;

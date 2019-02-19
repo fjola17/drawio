@@ -19,10 +19,11 @@ $(function(){
     };
 
     //Selecting icons
-    $('.icon').on('click', function(){
+    $('.icon' ).on('click', function(){
         $('.icon').removeClass('selected');
         $(this).addClass('selected');
-        drawio.selectedShape = $(this).data('shape');  
+        drawio.selectedShape = $(this).data('shape');
+        console.log(drawio.selectedShape);
     });
     //change color on the pen, shapes or the text
     $("#color-picker").on("change",function(){
@@ -50,7 +51,7 @@ $(function(){
         }
         drawio.ctx.lineWidth = size;
     });
-    
+
     //undo changes
     $("#undo").on("click", function(){
         var lastevent = drawio.shapes[drawio.shapes.length - 1];
@@ -76,6 +77,16 @@ $(function(){
         var ypos = mouseEvent.pageY - drawio.canvas.offsetTop;
         return {x: xpos, y: ypos};
     }
+    function getShape(mousePos){
+        var i;
+        var shapesToMove = [];
+        for(i = 0; i < drawio.shapes.length; i++){
+            if((mousePos.x < drawio.shapes[i].width && mousePos.x > drawio.shapes[i].position.x || mousePos.x > drawio.shapes[i].width && mousePos.x < drawio.shapes[i].position.x) || (mousePos.y < drawio.shapes[i].height && mousePos.y > drawio.shapes[i].position.y || mousePos.y > drawio.shapes[i].height && mousePos.y < drawio.shapes[i].position.y)){
+                shapesToMove.push(i);
+            }
+        }
+        return shapesToMove;
+    }
     //mousedown
     $('#my-canvas').on('mousedown', function(mouseEvent){
         var mouse = getMouse(mouseEvent)
@@ -83,30 +94,42 @@ $(function(){
             case drawio.availableShapes.RECTANGLE:
                 drawio.selectedElement = new Rectangle({ x: mouse.x, y: mouse.y }, 0, 0, color);
                 break;
-            case drawio.availableShapes.PENCIL:                
+            case drawio.availableShapes.PENCIL:
                 drawing = true;
                 drawio.selectedElement = new Pencil({x: mouse.x, y: mouse.y}, [], color, size);
                 break;
             case drawio.availableShapes.CIRCLE:
-                console.log("Circle: Not done yet");
+                drawio.selectedElement = new Circle({ x: mouseEvent.offsetX, y: mouseEvent.offsetY }, 0, color);
                 break;
             case drawio.availableShapes.LINE:
                 drawio.selectedElement = new Line({x: mouse.x, y: mouse.y}, 0, 0, color, size);
                 break;
             case drawio.availableShapes.TEXT:
-                console.log("TEXT: blablabla");
+                drawio.selectedElement = new Text({ x: mouseEvent.offsetX, y: mouseEvent.offsetY}, 0, 0, color);
                 break;
+            case drawio.availableShapes.MOVE:
+                var toMove = getShape(mouse);
+                var moveOrigin = mouse;
         }
     });
     //mosemove
     $('#my-canvas').on('mousemove', function(mouseEvent){
-        var mouse = getMouse(mouseEvent) 
         
         if(drawio.selectedElement){
-            drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
-            drawio.selectedElement.resize(mouseEvent.offsetX, mouseEvent.offsetY);
-            drawCanvas()
-        }
+               /* var yOffset = mouse.y - moveOrigin.y;
+                for(i = 0; i < toMove.length; j++){
+                    shapes[toMove[j]].position.x + xOffset;
+                    shapes[toMove[j]].position.y + yOffset;
+                    shapes[toMove[j]].position.width + xOffset;
+                    shapes[toMove[j]].position.height + yOffset;
+                }
+            }
+            else{*/
+                drawio.selectedElement.resize(mouseEvent.offsetX, mouseEvent.offsetY);
+            }
+
+        drawCanvas();
+        
 
     });
     //mouse goes out of the canvas, it should
@@ -118,7 +141,7 @@ $(function(){
             dragging = false;
             drawio.redo.length = 0; //make it so it's not able to redo after a pen has been written
         }
-        
+
     })
     //mouseup
     $('#my-canvas').on('mouseup', function(mouseEvent){

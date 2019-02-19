@@ -4,9 +4,10 @@ h1{
     color: yellowgreen;
 }
 .navbar{
-    height: 100px;    
-    width: 700px;
+    height: 100px;
+    width: 1000px;
     margin: auto;
+
 }
 
 #my-canvas{
@@ -17,9 +18,10 @@ h1{
 }
 
 .icon{
+
     height: 50px;
     width: 50px;
-    
+
 }
 #line{
     background-image: url(https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Pipe.svg/768px-Pipe.svg.png);
@@ -27,7 +29,7 @@ h1{
 }
 
 #rectangle{
-    
+
     background-image: url(http://www.kidsmathgamesonline.com/images/pictures/shapes120/square120.jpg);
     background-size: cover;
 }
@@ -49,6 +51,16 @@ h1{
     background-color: black;
     width: 30px;
     height: 30px;
+}
+#text-to-draw{
+    width: 100px;
+}
+#move{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: stretch;
+
 }
 .color{
     width: 100px;
