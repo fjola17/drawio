@@ -9,6 +9,10 @@ h1{
     margin: auto;
 
 }
+#image{
+    width: 50%;
+    margin: auto;
+}
 
 #my-canvas{
     background-color: white;

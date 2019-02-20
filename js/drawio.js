@@ -105,7 +105,11 @@ $(function(){
                 drawio.selectedElement = new Line({x: mouse.x, y: mouse.y}, 0, 0, color, size);
                 break;
             case drawio.availableShapes.TEXT:
-                drawio.selectedElement = new Text({ x: mouseEvent.offsetX, y: mouseEvent.offsetY}, 0, 0, color);
+            
+    var textData = $('#text-shape').val();
+    var textFont = $('#fontSize').val().concat(' ', $('#textFont').val());
+                drawio.selectedElement = new Text({ x: mouseEvent.offsetX, y: mouseEvent.offsetY}, 0, 0, color, textData, textFont);
+                
                 break;
             case drawio.availableShapes.MOVE:
                 var toMove = getShape(mouse);
@@ -125,6 +129,7 @@ $(function(){
                 }
             }
             else{*/
+                drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
                 drawio.selectedElement.resize(mouseEvent.offsetX, mouseEvent.offsetY);
             }
 
@@ -156,28 +161,39 @@ $(function(){
         }
     });
     $("#save").on("click", function(){
-        console.log("I don't do anything yet");
+        var imput = $("#image-title").val();
+        console.log(imput);
         myStorage = window.localStorage;
         var content = JSON.stringify(drawio);
-        localStorage.setItem("image", content);
+        myStorage.setItem(imput, content);
+        $("#files").append("<li class='dropdown-item savefile'>"+imput+"</li>");
     });
 
-    $("#load").on("click", function(){
-        console.log("I don't do anything yet");
+    $("#load").one("click", function(){
         myStorage = window.localStorage;
-        var canv = localStorage.getItem("image");
-        var values = JSON.parse(canv); //parse the json string from local storage
-        var item = values.shapes;
-        drawio.shapes.length = 0;
-        for(let i = 0; i < item.length; i++){
-            drawio.selectedShape = item[i].type;
-            redrawCanvas(item[i]);
-            drawio.shapes.push(drawio.selectedElement);
-            drawio.selectedElement = null;
+        var keys = Object.keys(localStorage);
+        for(let i = 0; i < keys.length; i++){
+            var key = keys[i];
+            $("#files").append("<li class='dropdown-item savefile'>"+key+"</li>");
         }
-        drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
-        drawCanvas();
-        
+        //get the savefile from the list declared from local storage
+        $(".savefile").on("click", function(){
+            var someval = $(this).html();
+            var canv = localStorage.getItem(someval);
+            var values = JSON.parse(canv); //parse the json string from local storage
+            var item = values.shapes;
+            drawio.shapes.length = 0;
+            for(let i = 0; i < item.length; i++){
+                drawio.selectedShape = item[i].type;
+                console.log(item[i])
+                redrawCanvas(item[i]);
+                drawio.shapes.push(drawio.selectedElement);
+                drawio.selectedElement = null;
+            }
+            $("#image-title").val(someval);
+            drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
+            drawCanvas();
+        });
     });
 
 });

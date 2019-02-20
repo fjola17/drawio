@@ -65,6 +65,7 @@ function Circle(position, rad, color){
     Shape.call(this, position);
     this.rad = rad;
     this.color = color;
+    this.type = "circle";
     console.log(color);
 }
 
@@ -84,13 +85,14 @@ Circle.prototype.resize = function(x1, y1){
     this.rad = Math.sqrt(Math.pow((x1 - this.position.x), 2) + Math.pow((y1 - this.position.y), 2));
 }
 
-function Text(position, width, height, color){
+function Text(position, width, height, color, textData, textFont){
     Shape.call(this, position);
     this.width = width;
     this.height = height;
     this.color = color;
-    this.textData = $('#text-shape').val();
-    this.textFont = $('#fontSize').val().concat(' ', $('#textFont').val());
+    this.type = "text";
+    this.textData = textData;
+    this.textFont = textFont;
 }
 
 Text.prototype = Object.create(Shape.prototype);
@@ -99,7 +101,7 @@ Text.prototype.constructor = Text;
 Text.prototype.render = function(){
     drawio.ctx.fillStyle = this.color;
     drawio.ctx.font = this.textFont;
-    console.log(this.textFont);
+    //console.log(this.textFont);
     drawio.ctx.fillText(this.textData, this.position.x, this.position.y)
 
 };
