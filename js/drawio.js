@@ -94,6 +94,8 @@ $(function(){
     }
     function getShape(mousePos){
 
+        var shapesToMove;
+
         for(let i = 0; i < drawio.shapes.length; i++){
             console.log("inside for loop");
             var tempShape = drawio.shapes[i];
@@ -101,6 +103,7 @@ $(function(){
 
                 case "rectangle":
                     //top left to bottom right
+
                     if(inRect(mousePos.x, mousePos.y, tempShape.position.x, tempShape.position.y, tempShape.width, tempShape.height)) {
                         console.log("Clicked rect");
                         return drawio.shapes[i];
@@ -132,6 +135,7 @@ $(function(){
                             console.log("Clicked pencil line");
                             return true;
                         }
+
                     }
                     break;
                 default:
@@ -159,53 +163,81 @@ $(function(){
                 break;
             case drawio.availableShapes.TEXT:
 
-    var textData = $('#text-shape').val();
-    var textFont = $('#fontSize').val().concat(' ', $('#textFont').val());
+                var textData = $('#text-shape').val();
+                var textFont = $('#fontSize').val().concat(' ', $('#textFont').val());
                 drawio.selectedElement = new Text({ x: mouseEvent.offsetX, y: mouseEvent.offsetY}, 0, 0, color, textData, textFont);
 
                 break;
             case drawio.availableShapes.MOVE:
                 toMove = getShape(mouse);
                 moveOrigin = mouse;
+                dragging = true;
+
         }
     });
+
+    function moveShape(shape){
+
+        drawio.selectedShape = shape;
+
+        console.log("Shape:" + drawio.selectedShape);
+    }
+
     //mosemove
     $('#my-canvas').on('mousemove', function(mouseEvent){
-
+        var mouse = getMouse(mouseEvent);
         if(drawio.selectedElement){
+            console.log("right place");
             drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
             drawio.selectedElement.resize(mouseEvent.offsetX, mouseEvent.offsetY);
+
         }
 
-        drawCanvas();
+        if(dragging ===true){
+            if(dragging == false){
+                return;
+            }
+            toMove.position.x = mouse.x;
+            toMove.position.y = mouse.y;
+            moveShape(toMove);
+            drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
 
+        }
+        drawCanvas();
 
     });
 
     //mouse goes out of the canvas, it should
     $('#my-canvas').on('mouseleave', function(mouseEvent){
         if(drawio.selectedElement != null){
-            drawio.shapes.push(drawio.selectedElement);
-            drawio.selectedElement = null;
-            drawing = false;
+        if(dragging){
             dragging = false;
+        }
+        else{
+            drawio.shapes.push(drawio.selectedElement);
+
+            drawing = false;
             toMove = null;
             drawio.redo.length = 0; //make it so it's not able to redo after a pen has been written
         }
+        drawio.selectedElement = null;
+    }
 
     })
     //mouseup
     $('#my-canvas').on('mouseup', function(mouseEvent){
         if(drawio.selectedElement != null){
+            if(!dragging){
             drawio.shapes.push(drawio.selectedElement);
-            drawio.selectedElement = null;
-            drawing = false;
-            dragging = false;
             toMove = null;
+            }
             drawio.redo.length = 0; //make it so it's not able to redo after a pen has been written
             drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
             drawCanvas()
+
         }
+        dragging = false;
+       drawio.selectedElement = null;
     });
     //save image
     $("#save").on("click", function(){
@@ -252,17 +284,13 @@ $(function(){
             var shape = $(".icon.selected").data('shape');
             console.log(shape);
             drawio.selectedShape = shape;
-            //drawio.ctx.strokeStyle = color;
-            //drawio.ctx.
             drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
             drawCanvas();
         });
     });
     //Export image to png
     $("#export").on("click", function(){
-        var canvasEl = $("#my-canvas")
-        var url = canvasEl.toDataURL("image/png");
-        console.log(url);
+        var url = drawio.canvas.toDataURL("image/png");
         var contextElement = null;
     });
     $("#fill").on("click", function(){
