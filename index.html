@@ -17,6 +17,7 @@
 <body>
 
     <h1>Drawio.js</h1>
+    <!--Title of the image-->
     <div class="form group row" id="image">
         <label class="col-sm-2 col-form-label" for="image-title">Name: </label>
         <div class="col-sm-10">
@@ -24,7 +25,7 @@
         </div>
     </div>
     <nav class="navbar d-flex justify-content-between">
-
+        <!--Change the size of the shapes-->
         <div class="dropdown">
             <button class="btn dropdown-toggle" id="size" type="button" data-toggle="dropdown">
                 Size<span class="caret"></span>
@@ -35,23 +36,27 @@
                 <li class="pen-size dropdown-item" id="large">Large</li>
             </ul>
         </div>
-
+        <!--Rectangle-->
         <div class="icon" data-shape="rectangle" id="rectangle">
             <i class="fa fa-square-o fa-sm" aria-hidden="true"> </i>
         </div>
-
+        <!--Line-->
         <div class="icon" data-shape="line" id="line"></div>
-
+        <!--Pencil-->
         <div class="icon selected" data-shape="pencil" id="pencil"></div>
 
+        <!--Circle-->
         <div class="icon" data-shape="circle" id="circle"></div>
 
+        <!--Change color with color picker-->
         <input type="color" id="color-picker">
 
+        <!--Move shapes around-->
         <div class="icon" data-shape="move" id="move">
             <i class="far fa-hand-paper" aria-hidden="true"> </i>
         </div>
 
+        <!--Edit text-->
         <div id="text-to-draw" class="icon" class="form-group" data-shape="text" >
             <textarea id="text-shape" class="form-control" name="text-shape" rows="2" cols="10" placeholder="Write text here..."></textarea>
         </div>
@@ -73,12 +78,16 @@
                 <option value="72px">72</option>
             </select>
         </div>
+        <label for="fill">Fill</label>
+        <input type="checkbox" id="fill">
     </nav>
+    <!--The htmæ5 canvas-->
     <div class="container">
         <canvas id="my-canvas" width="600" height="400">
             Not supported :/
         </canvas>
     </div>
+    <!-- Buttons to reset canvas, undo, redo, save, load and export the canvas -->
     <div class="navbar2 d-flex justify-content-between w-25 mx-auto">
         <div class="btn btn-danger" id="reset">Reset</div>
         <div class="btn btn-primary" id="undo">Undo</div>
@@ -88,6 +97,7 @@
             <button class="btn btn-warning dropdown-toggle" id="load" type="button" data-toggle="dropdown">Load</button>
             <ul class="dropdown-menu" id="files"></ul>
         </div>
+        <div class="btn btn-primary" id="export">Download</div>
     </div>
 
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>

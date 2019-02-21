@@ -7,22 +7,20 @@ h1{
     height: 100px;
     width: 1000px;
     margin: auto;
-
 }
 #image{
     width: 50%;
     margin: auto;
 }
-
+/* Canvas basics */
 #my-canvas{
     background-color: white;
-    margin-left: 25%;
-    margin-right: 25%;
+    margin-left: 20%;
+    margin-right: 20%;
     border: solid;
 }
-
+/*Each icon */
 .icon{
-
     height: 50px;
     width: 50px;
 
@@ -33,7 +31,6 @@ h1{
 }
 
 #rectangle{
-
     background-image: url(http://www.kidsmathgamesonline.com/images/pictures/shapes120/square120.jpg);
     background-size: cover;
 }
@@ -51,11 +48,6 @@ h1{
     font-family: Arial, Helvetica, sans-serif;
     font-size: 20px;
 }
-#color{
-    background-color: black;
-    width: 30px;
-    height: 30px;
-}
 #text-to-draw{
     width: 100px;
 }
@@ -64,12 +56,8 @@ h1{
     justify-content: center;
     align-items: center;
     align-content: stretch;
+}
 
-}
-.color{
-    width: 100px;
-    height: 30px;
-}
 .selected{
     border: solid yellow;
 }
