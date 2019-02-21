@@ -90,9 +90,9 @@ Circle.prototype.render = function(){
     //render a circle
     drawio.ctx.beginPath();
     if(this.checked){
-        drawio.ctx.fillStyle = this.color; 
+        drawio.ctx.fillStyle = this.color;
         drawio.ctx.arc(this.position.x, this.position.y, this.rad, 0, Math.PI * 2);
-        drawio.ctx.fill();   
+        drawio.ctx.fill();
     }
     else{
         drawio.ctx.strokeStyle = this.color;
@@ -100,7 +100,7 @@ Circle.prototype.render = function(){
         drawio.ctx.arc(this.position.x, this.position.y, this.rad, 0, Math.PI * 2);
         drawio.ctx.stroke();
     }
-    
+
     drawio.ctx.closePath();
 };
 Circle.prototype.resize = function(x1, y1){
