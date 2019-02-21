@@ -1,5 +1,4 @@
 //define the shapes
-
 function Shape(position){
     this.position = position;
 };
@@ -8,7 +7,7 @@ Shape.prototype.move = function(position){
     this.position = position;
 };
 Shape.prototype.resize = function(){};
-
+//rectangle constructor
 function Rectangle(position, width, height, strokeStyle, checked, lineWidth){
     Shape.call(this, position);
     this.width = width;
@@ -22,6 +21,7 @@ function Rectangle(position, width, height, strokeStyle, checked, lineWidth){
 //assign the prototype
 Rectangle.prototype = Object.create(Shape.prototype);
 Rectangle.prototype.constructor = Rectangle;
+//rectangle render func
 Rectangle.prototype.render = function(){
     if(this.checked){
         drawio.ctx.fillStyle = this.strokeStyle;
@@ -33,11 +33,12 @@ Rectangle.prototype.render = function(){
         drawio.ctx.strokeRect(this.position.x, this.position.y, this.width, this.height)
     }
 };
+//resize func for rectangle
 Rectangle.prototype.resize = function(x1, y1){
     this.width = x1 - this.position.x;
     this.height = y1 - this.position.y;
 }
-
+//line constructor
 function Line(position, x1, y1, strokeStyle, lineWidth){
     Shape.call(this, position, strokeStyle);
     this.x1 = x1;
@@ -49,21 +50,23 @@ function Line(position, x1, y1, strokeStyle, lineWidth){
 }
 Line.prototype = Object.create(Shape.prototype);
 Line.prototype.constructor = Line;
+//draw the line
 Line.prototype.render = function(){
     drawio.ctx.beginPath();
     drawio.ctx.strokeStyle = this.strokeStyle;
     drawio.ctx.lineWidth = this.lineWidth;
     drawio.ctx.moveTo(this.position.x, this.position.y);
     drawio.ctx.lineTo(this.x1, this.y1);
-
     drawio.ctx.closePath();
     drawio.ctx.stroke();
 }
+//line resize function
 Line.prototype.resize = function(x2, y2){
     this.x1 = x2;
     this.y1 = y2;
 }
 
+//circle constructor
 function Circle(position, rad, strokeStyle, checked, lineWidth){
     Shape.call(this, position);
     this.rad = rad;
@@ -114,11 +117,9 @@ Text.prototype.constructor = Text;
 Text.prototype.render = function(){
     drawio.ctx.fillStyle = this.strokeStyle;
     drawio.ctx.font = this.textFont;
-    //console.log(this.textFgitont);
     drawio.ctx.fillText(this.textData, this.position.x, this.position.y)
-
 };
-
+//Pencil constructor
 function Pencil(position, shapeArr, strokeStyle, lineWidth){
     Shape.call(this, position);
     this.strokeStyle = strokeStyle;
@@ -131,6 +132,8 @@ function Pencil(position, shapeArr, strokeStyle, lineWidth){
 }
 Pencil.prototype = Object.create(Shape.prototype);
 Pencil.prototype.constructor = Pencil;
+
+//pencil render function that goes through the shape array and render the shapes
 Pencil.prototype.render = function(){
     for(let i = 1; i < this.shapeArr.length; i++){
         drawio.ctx.beginPath();
@@ -142,6 +145,7 @@ Pencil.prototype.render = function(){
         drawio.ctx.closePath();
     }
 }
+//pencil resize (adds shapes to the shape array)
 Pencil.prototype.resize = function(x1, y1){
     this.position.x = x1;
     this.position.y = y1;

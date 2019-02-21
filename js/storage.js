@@ -14,7 +14,6 @@ function redrawCanvas(item){
             drawio.selectedElement = new Line({x: item.position.x, y: item.position.y}, item.x1, item.y1, item.strokeStyle, item.lineWidth);
             break;
         case drawio.availableShapes.TEXT:
-        console.log(item);
             drawio.selectedElement = new Text({ x: item.position.x, y: item.position.y}, item.width, item.height, item.strokeStyle, item.textData, item.textFont);
             break;
     }
