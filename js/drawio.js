@@ -77,21 +77,35 @@ $(function(){
         var ypos = mouseEvent.pageY - drawio.canvas.offsetTop;
         return {x: xpos, y: ypos};
     }
+    //checks if mouse is inside rectangle
     function inRect(mx, my, x1, y1, width, height){
-        //top left to bottom right
-        if(mx >= x1 && mx < x1 + width && my > y1 && my < y1 + height){
-            console.log("wut");
-            return true;
+        //check needed since negative width will pass an if statement it shouldn't
+        if(width > 0){
+            //top left to bottom right
+            if(mx >= x1 && mx < x1 + width && my > y1 && my < y1 + height){
+                return true;
+            }
+            //bottom left t top right
+            else if(mx >= x1 && mx < x1 + width && my > y1 + height && my < y1){
+                return true;
+            }
+        }
+        else if(width < 0) {
+            //top right to bottom left
+            if(mx >= x1 + width && mx <= x1 && my >= y1 && my <= y1 + height) {
+                return true;
+            }
+            //bottom right to top left
+            else if(mx >= x1 + width && mx <= x1 && my >= y1 + height && my <= y1) {
+                return true;
+            }
+        }
 
-        }
-        else if(mx >= x1 + width && mx <= x1 && my >= y1 && my <= y1 + height) {
-            console.log(mx, x1);
-            return true;
-        }
         else {
             return false;
         }
     }
+    //returns shape at current mouse position
     function getShape(mousePos){
 
         var shapesToMove;
@@ -102,8 +116,6 @@ $(function(){
             switch (drawio.shapes[i].type) {
 
                 case "rectangle":
-                    //top left to bottom right
-
                     if(inRect(mousePos.x, mousePos.y, tempShape.position.x, tempShape.position.y, tempShape.width, tempShape.height)) {
                         console.log("Clicked rect");
                         return drawio.shapes[i];
@@ -129,9 +141,8 @@ $(function(){
                     }
                     break;
                 case "pencil":
-                    for(let i = 0; i < tempShape.shapearr.length; i++){
-                        console.log("Mouse: " + mousePos.x, mousePos.y + "Line: " + tempShape.shapearr[i][0], tempShape.shapearr[i][1]);
-                        if ((mousePos.x - 8 < tempShape.shapearr[i][0] && mousePos.x + 8 > tempShape.shapearr[i][0]) && (mousePos.y - 8 < tempShape.shapearr[i][1] && mousePos.y + 8 > tempShape.shapearr[i][1])) {
+                    for(let i = 0; i < tempShape.shapeArr.length; i++){
+                        if ((mousePos.x - 8 < tempShape.shapeArr[i][0] && mousePos.x + 8 > tempShape.shapeArr[i][0]) && (mousePos.y - 8 < tempShape.shapeArr[i][1] && mousePos.y + 8 > tempShape.shapeArr[i][1])) {
                             console.log("Clicked pencil line");
                             return true;
                         }
@@ -162,17 +173,13 @@ $(function(){
                 drawio.selectedElement = new Line({x: mouse.x, y: mouse.y}, 0, 0, color, size);
                 break;
             case drawio.availableShapes.TEXT:
-
-                var textData = $('#text-shape').val();
-                var textFont = $('#fontSize').val().concat(' ', $('#textFont').val());
-                drawio.selectedElement = new Text({ x: mouseEvent.offsetX, y: mouseEvent.offsetY}, 0, 0, color, textData, textFont);
-
+                drawio.selectedElement = new Text({ x: mouseEvent.offsetX, y: mouseEvent.offsetY}, 0, 0, color, $('#text-shape').val(), $('#fontSize').val().concat(' ', $('#textFont').val()));
                 break;
             case drawio.availableShapes.MOVE:
                 toMove = getShape(mouse);
                 moveOrigin = mouse;
                 dragging = true;
-
+                break;
         }
     });
 
@@ -209,27 +216,26 @@ $(function(){
 
     //mouse goes out of the canvas, it should
     $('#my-canvas').on('mouseleave', function(mouseEvent){
-        if(drawio.selectedElement != null){
+        if(drawio.selectedElement != undefined){
         if(dragging){
             dragging = false;
         }
         else{
             drawio.shapes.push(drawio.selectedElement);
-
             drawing = false;
-            toMove = null;
+            toMove = undefined;
             drawio.redo.length = 0; //make it so it's not able to redo after a pen has been written
         }
-        drawio.selectedElement = null;
+        drawio.selectedElement = undefined;
     }
 
     })
     //mouseup
     $('#my-canvas').on('mouseup', function(mouseEvent){
-        if(drawio.selectedElement != null){
+        if(drawio.selectedElement != undefined){
             if(!dragging){
             drawio.shapes.push(drawio.selectedElement);
-            toMove = null;
+            toMove = undefined;
             }
             drawio.redo.length = 0; //make it so it's not able to redo after a pen has been written
             drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
@@ -237,7 +243,7 @@ $(function(){
 
         }
         dragging = false;
-       drawio.selectedElement = null;
+       drawio.selectedElement = undefined;
     });
     //save image
     $("#save").on("click", function(){
@@ -246,7 +252,7 @@ $(function(){
         myStorage = window.localStorage;
         var content = JSON.stringify(drawio);
         //checks if the key already exists in the stoage
-        if(myStorage.getItem(imput) === null){
+        if(myStorage.getItem(imput) === undefined){
             $("#files").append("<li class='dropdown-item savefile'>"+imput+"</li>");
         }
         //add to storage
@@ -276,7 +282,7 @@ $(function(){
                 console.log(item[i])
                 redrawCanvas(item[i]);
                 drawio.shapes.push(drawio.selectedElement);
-                drawio.selectedElement = null;
+                drawio.selectedElement = undefined;
             }
             //Change the textbox on top to the name of the image before loading
             $("#image-title").val(someval);
@@ -291,7 +297,7 @@ $(function(){
     //Export image to png
     $("#export").on("click", function(){
         var url = drawio.canvas.toDataURL("image/png");
-        var contextElement = null;
+        var contextElement = undefined;
     });
     $("#fill").on("click", function(){
         if(this.checked){
