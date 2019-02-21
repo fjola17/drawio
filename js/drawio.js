@@ -187,13 +187,14 @@ $(function(){
     $('#my-canvas').on('mousemove', function(mouseEvent){
         var mouse = getMouse(mouseEvent);
         if(drawio.selectedElement){
-            console.log("right place");
-            //drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
             drawio.selectedElement.resize(mouseEvent.offsetX, mouseEvent.offsetY);
         }
-        if(dragging ===true){
-            toMove.position.x = mouse.x;
-            toMove.position.y = mouse.y;
+        if(dragging){
+            if(toMove != undefined){
+                toMove.position.x = mouse.x;
+                toMove.position.y = mouse.y;
+            }
+            
 /*            var offsetX = toMove.position.x - toMove.x1;
             var offsetY = toMove.position.y - toMove.y1;
             toMove.x1 = offsetX;
@@ -206,38 +207,33 @@ $(function(){
 
     //mouse goes out of the canvas, it should
     $('#my-canvas').on('mouseleave', function(mouseEvent){
-        if(drawio.selectedElement != null){
         if(dragging){
             dragging = false;
-        }
-        else{
-            drawio.shapes.push(drawio.selectedElement);
-
-            drawing = false;
-            toMove = null;
-            drawio.redo.length = 0; //make it so it's not able to redo after a pen has been written
-        }
-        drawio.selectedElement = null;
-    }
-
-    })
-    //mouseup
-    $('#my-canvas').on('mouseup', function(mouseEvent){
-        if(dragging){
-            dragging = false;
+            toMove = undefined;
         }
         if(drawio.selectedElement != null){
             if(!dragging){
             drawio.shapes.push(drawio.selectedElement);
-            //toMove = null;
             }
             drawio.redo.length = 0; //make it so it's not able to redo after a pen has been written
             drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
-           // drawCanvas()
-            
-        }drawio.selectedElement = null;
-        
-        
+        }
+        drawio.selectedElement = null;
+    });
+    //mouseup
+    $('#my-canvas').on('mouseup', function(mouseEvent){
+        if(dragging){
+            dragging = false;
+            toMove = undefined;
+        }
+        if(drawio.selectedElement != null){
+            if(!dragging){
+            drawio.shapes.push(drawio.selectedElement);
+            }
+            drawio.redo.length = 0; //make it so it's not able to redo after a pen has been written
+            drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
+        }
+        drawio.selectedElement = null; 
     });
     //save image
     $("#save").on("click", function(){
@@ -301,5 +297,4 @@ $(function(){
             checked = false;
         }
     });
-
 });
