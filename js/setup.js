@@ -4,7 +4,7 @@ window.drawio = {
     selectedShape: "pencil",
     ctx: document.getElementById("my-canvas").getContext("2d"),
     canvas: document.getElementById('my-canvas'),
-    selectedElement : null,
+    selectedElement : undefined,
     availableShapes:{
         RECTANGLE : "rectangle",
         PENCIL : "pencil",

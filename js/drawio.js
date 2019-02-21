@@ -100,7 +100,6 @@ $(function(){
                 return true;
             }
         }
-
         else {
             return false;
         }
@@ -127,7 +126,7 @@ $(function(){
                         return drawio.shapes[i];
                     }
                     break;
-                case "text":
+                case "text"://I don't work
                     console.log("made it");
                     if(inRect(mousePos.x - 15, mousePos.y - (tempShape.textData.length * 10), tempShape.position.x, tempShape.position.y, tempShape.textData.length * 10, 15)) {
                         console.log("Clicked text");
@@ -140,7 +139,7 @@ $(function(){
                         return drawio.shapes[i];
                     }
                     break;
-                case "pencil":
+                case "pencil": //I don't work
                     for(let i = 0; i < tempShape.shapeArr.length; i++){
                         if ((mousePos.x - 8 < tempShape.shapeArr[i][0] && mousePos.x + 8 > tempShape.shapeArr[i][0]) && (mousePos.y - 8 < tempShape.shapeArr[i][1] && mousePos.y + 8 > tempShape.shapeArr[i][1])) {
                             console.log("Clicked pencil line");
@@ -149,8 +148,7 @@ $(function(){
 
                     }
                     break;
-                default:
-                    console.log("oops");
+                
 
             }
         }
@@ -219,7 +217,7 @@ $(function(){
             dragging = false;
             toMove = undefined;
         }
-        if(drawio.selectedElement != null){
+        if(drawio.selectedElement != undefined){
             if(!dragging){
             drawio.shapes.push(drawio.selectedElement);
 
@@ -229,7 +227,7 @@ $(function(){
             drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
         }
 
-        drawio.selectedElement = null;
+        drawio.selectedElement = undefined;
     });
     //mouseup
     $('#my-canvas').on('mouseup', function(mouseEvent){
@@ -237,7 +235,7 @@ $(function(){
             dragging = false;
             toMove = undefined;
         }
-        if(drawio.selectedElement != null){
+        if(drawio.selectedElement != undefined){
             if(!dragging){
             drawio.shapes.push(drawio.selectedElement);
 
@@ -246,7 +244,7 @@ $(function(){
             drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
         }
 
-        drawio.selectedElement = null;
+        drawio.selectedElement = undefined;
     });
     //save image
     $("#save").on("click", function(){
