@@ -81,9 +81,7 @@ $(function(){
         var i;
         var shapesToMove = [];
         for(i = 0; i < drawio.shapes.length; i++){
-            if((mousePos.x < drawio.shapes[i].width && mousePos.x > drawio.shapes[i].position.x || mousePos.x > drawio.shapes[i].width && mousePos.x < drawio.shapes[i].position.x) || (mousePos.y < drawio.shapes[i].height && mousePos.y > drawio.shapes[i].position.y || mousePos.y > drawio.shapes[i].height && mousePos.y < drawio.shapes[i].position.y)){
-                shapesToMove.push(i);
-            }
+            console.log(shapes[i]);
         }
         return shapesToMove;
     }
@@ -105,35 +103,43 @@ $(function(){
                 drawio.selectedElement = new Line({x: mouse.x, y: mouse.y}, 0, 0, color, size);
                 break;
             case drawio.availableShapes.TEXT:
-            
-    var textData = $('#text-shape').val();
-    var textFont = $('#fontSize').val().concat(' ', $('#textFont').val());
-                drawio.selectedElement = new Text({ x: mouseEvent.offsetX, y: mouseEvent.offsetY}, 0, 0, color, textData, textFont);
-                
+                var textData = $('#text-shape').val();
+                var textFont = $('#fontSize').val().concat(' ', $('#textFont').val());
+                drawio.selectedElement = new Text({ x: mouseEvent.offsetX, y: mouseEvent.offsetY}, 0, 0, color, textData, textFont);                
                 break;
             case drawio.availableShapes.MOVE:
+                dragging = true;
                 var toMove = getShape(mouse);
+                console.log(toMove);
                 var moveOrigin = mouse;
+                console.log(moveOrigin);
         }
     });
     //mosemove
     $('#my-canvas').on('mousemove', function(mouseEvent){
-        
+        var mouse = getMouse(mouseEvent);
         if(drawio.selectedElement){
-               /* var yOffset = mouse.y - moveOrigin.y;
-                for(i = 0; i < toMove.length; j++){
-                    shapes[toMove[j]].position.x + xOffset;
-                    shapes[toMove[j]].position.y + yOffset;
-                    shapes[toMove[j]].position.width + xOffset;
-                    shapes[toMove[j]].position.height + yOffset;
+            console.log("I'm here");
+            if(drawio.selectedElement == 'move'){
+                if(dragging === false){
+                    return;
                 }
+                var yOffset = mouse.y - moveOrigin.y;
+                var xOffset = mouse.y - mouseOrgin.x;
+                mouseOrgin.y = mouse.y;
+                mouseOrgin.x = mouse.x;
+                /*for(let i = 0; i < toMove.length; j++){
+                    
+                }*/
             }
-            else{*/
+            else{
+                console.log("right place");
                 drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
                 drawio.selectedElement.resize(mouseEvent.offsetX, mouseEvent.offsetY);
             }
-
-        drawCanvas();
+            drawCanvas();
+        }
+        
         
 
     });
@@ -205,17 +211,13 @@ $(function(){
             var shape = $(".icon.selected").data('shape');
             console.log(shape);
             drawio.selectedShape = shape;
-            //drawio.ctx.strokeStyle = color;
-            //drawio.ctx.
             drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
             drawCanvas();
         });
     });
     //Export image to png
     $("#export").on("click", function(){
-        var canvasEl = $("#my-canvas")
-        var url = canvasEl.toDataURL("image/png");
-        console.log(url);
+        var url = drawio.canvas.toDataURL("image/png");
         var contextElement = null;
     });
     $("#fill").on("click", function(){
