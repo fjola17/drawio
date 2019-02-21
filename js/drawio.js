@@ -1,5 +1,3 @@
-//Setup of the assignment
-
 
 $(function(){
     drawio.canvas.width = drawio.canvas.clientWidth;
@@ -8,7 +6,7 @@ $(function(){
     var size = 4, checked = false;
     drawio.ctx.strokeStyle = color;
     drawio.ctx.lineWidth = size;
-    var drawing = false, dragging = false;
+    var dragging = false;
     function drawCanvas(){
         if(drawio.selectedElement){
             drawio.selectedElement.render();
@@ -106,14 +104,11 @@ $(function(){
     }
     //returns shape at current mouse position
     function getShape(mousePos){
-
         var shapesToMove;
-
         for(let i = drawio.shapes.length - 1; i >= 0; i--){
             console.log("inside for loop");
             var tempShape = drawio.shapes[i];
             switch (drawio.shapes[i].type) {
-
                 case "rectangle":
                     if(inRect(mousePos.x, mousePos.y, tempShape.position.x, tempShape.position.y, tempShape.width, tempShape.height)) {
                         console.log("Clicked rect");
@@ -128,6 +123,7 @@ $(function(){
                     break;
                 case "text"://I don't work
                     console.log("made it");
+
                     if(inRect(mousePos.x - 15, mousePos.y - (tempShape.textData.length * 10), tempShape.position.x, tempShape.position.y, tempShape.textData.length * 10, 15)) {
                         console.log("Clicked text");
                         return true;
@@ -145,11 +141,8 @@ $(function(){
                             console.log("Clicked pencil line");
                             return true;
                         }
-
                     }
                     break;
-                
-
             }
         }
     }
@@ -157,36 +150,28 @@ $(function(){
     $('#my-canvas').on('mousedown', function(mouseEvent){
         var mouse = getMouse(mouseEvent)
         switch(drawio.selectedShape){
-            case drawio.availableShapes.RECTANGLE:
+            case drawio.availableShapes.RECTANGLE: //if rectangle
                 drawio.selectedElement = new Rectangle({ x: mouse.x, y: mouse.y }, 0, 0, color, checked, size);
                 break;
-            case drawio.availableShapes.PENCIL:
-                drawing = true;
+            case drawio.availableShapes.PENCIL: //if pencil
                 drawio.selectedElement = new Pencil({x: mouse.x, y: mouse.y}, [], color, size);
                 break;
-            case drawio.availableShapes.CIRCLE:
+            case drawio.availableShapes.CIRCLE: //if circle
                 drawio.selectedElement = new Circle({ x: mouseEvent.offsetX, y: mouseEvent.offsetY }, 0, color, checked, size);
                 break;
-            case drawio.availableShapes.LINE:
+            case drawio.availableShapes.LINE: //if line
                 drawio.selectedElement = new Line({x: mouse.x, y: mouse.y}, 0, 0, color, size);
                 break;
-            case drawio.availableShapes.TEXT:
+            case drawio.availableShapes.TEXT: //if text
                 drawio.selectedElement = new Text({ x: mouseEvent.offsetX, y: mouseEvent.offsetY}, 0, 0, color, $('#text-shape').val(), $('#fontSize').val().concat(' ', $('#textFont').val()));
                 break;
-            case drawio.availableShapes.MOVE:
-                toMove = getShape(mouse);
+            case drawio.availableShapes.MOVE: //if move
+                toMove = getShape(mouse); //detects everything except for the text
                 moveOrigin = mouse;
                 dragging = true;
                 break;
         }
     });
-    function move(shape, mouse){
-        for(let i = 0; i < shape.length; i++){
-            shape[i].position.x = shape[i].position.x - mouse.x;
-            shape[i].position.y = shape[i].position.y - mouse.y;
-        }
-        return shape;
-    }
 
     //mosemove
     $('#my-canvas').on('mousemove', function(mouseEvent){
@@ -194,56 +179,44 @@ $(function(){
         if(drawio.selectedElement){
             drawio.selectedElement.resize(mouseEvent.offsetX, mouseEvent.offsetY);
         }
-        if(dragging){
+        if(dragging){ //if move
             if(toMove != undefined){
                 toMove.position.x = mouse.x;
                 toMove.position.y = mouse.y;
             }
-
-/*            var offsetX = toMove.position.x - toMove.x1;
-            var offsetY = toMove.position.y - toMove.y1;
-            toMove.x1 = offsetX;
-            toMove.y1 = offsetY;*/
         }
         drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
         drawCanvas();
-
     });
 
-    //mouse goes out of the canvas, it should
+    //mouse goes out of the canvas, it should stop paying attention to anything
     $('#my-canvas').on('mouseleave', function(mouseEvent){
-
+        //if there is something been moved
         if(dragging){
             dragging = false;
             toMove = undefined;
         }
         if(drawio.selectedElement != undefined){
             if(!dragging){
-            drawio.shapes.push(drawio.selectedElement);
-
+                drawio.shapes.push(drawio.selectedElement);
             }
-
             drawio.redo.length = 0; //make it so it's not able to redo after a pen has been written
-            drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
         }
-
         drawio.selectedElement = undefined;
     });
     //mouseup
     $('#my-canvas').on('mouseup', function(mouseEvent){
+        //if something has been moved
         if(dragging){
             dragging = false;
             toMove = undefined;
         }
         if(drawio.selectedElement != undefined){
             if(!dragging){
-            drawio.shapes.push(drawio.selectedElement);
-
+                drawio.shapes.push(drawio.selectedElement);
             }
             drawio.redo.length = 0; //make it so it's not able to redo after a pen has been written
-            drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
         }
-
         drawio.selectedElement = undefined;
     });
     //save image
@@ -274,7 +247,6 @@ $(function(){
             var canv = localStorage.getItem(someval);
             //parse the string to json
             var values = JSON.parse(canv); //parse the json string from local storage
-
             var item = values.shapes;
             drawio.shapes.length = 0;
             //goes through all the shapes and redraws them
@@ -295,11 +267,11 @@ $(function(){
             drawCanvas();
         });
     });
-    //Export image to png
+    //Export image to png (doesn't wory, is only a placeholder)
     $("#export").on("click", function(){
-        var url = drawio.canvas.toDataURL("image/png");
-        var contextElement = undefined;
+        alert("Could not save the canvas, you need to buy the full version for $9.99!!");
     });
+    //check if fill
     $("#fill").on("click", function(){
         if(this.checked){
             checked = true;
