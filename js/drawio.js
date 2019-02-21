@@ -17,8 +17,7 @@ $(function(){
             drawio.shapes[i].render();
         }
     };
-    var moveOrigin;
-    var toMove;
+
     //Selecting icons
     $('.icon' ).on('click', function(){
         $('.icon').removeClass('selected');
@@ -81,28 +80,58 @@ $(function(){
     function inRect(mx, my, x1, y1, width, height){
         //top left to bottom right
         if(mx >= x1 && mx < x1 + width && my > y1 && my < y1 + height){
+            console.log("wut");
             return true;
+
         }
-        else if(mx >= x1 - width && mx <= x1 && my >= y1 && my <= y1 + height) {
-            return false;
+        else if(mx >= x1 + width && mx <= x1 && my >= y1 && my <= y1 + height) {
+            console.log(mx, x1);
+            return true;
         }
         else {
             return false;
         }
     }
     function getShape(mousePos){
-        var shapesToMove = [];
+
         for(let i = 0; i < drawio.shapes.length; i++){
             console.log("inside for loop");
+            var tempShape = drawio.shapes[i];
             switch (drawio.shapes[i].type) {
 
                 case "rectangle":
-                    var tempShape = drawio.shapes[i];
-                    //console.log(mousePos);
-                    //console.log(tempShape);
                     //top left to bottom right
-                    if(inRect(mousePos.x, mousePos.y, tempShape.position.x, tempShape.position.y, Math.abs(tempShape.width), Math.abs(tempShape.height))) {
+                    if(inRect(mousePos.x, mousePos.y, tempShape.position.x, tempShape.position.y, tempShape.width, tempShape.height)) {
                         console.log("Clicked rect");
+                        return drawio.shapes[i];
+                    }
+                    break;
+                case "circle":
+                    if(Math.sqrt(Math.pow(Math.abs(mousePos.x - tempShape.position.x), 2) + Math.pow(Math.abs(mousePos.y - tempShape.position.y), 2)) <= tempShape.rad) {
+                        console.log("Clicked circle");
+                        return true;
+                    }
+                    break;
+                case "text":
+                    console.log("made it");
+                    if(inRect(mousePos.x - 15, mousePos.y - (tempShape.textData.length * 10), tempShape.position.x, tempShape.position.y, tempShape.textData.length * 10, 15)) {
+                        console.log("Clicked text");
+                        return true;
+                    }
+                    break;
+                case "line":
+                    if ((tempShape.position.x < mousePos.x < tempShape.x1 && tempShape.position.y < mousePos.y < tempShape.y1) || (tempShape.position.x > mousePos.x > tempShape.x1 && tempShape.position.y > mousePos.y > tempShape.y1)) {
+                        console.log("Clicked line");
+                        return true;
+                    }
+                    break;
+                case "pencil":
+                    for(let i = 0; i < tempShape.shapearr.length; i++){
+                        console.log("Mouse: " + mousePos.x, mousePos.y + "Line: " + tempShape.shapearr[i][0], tempShape.shapearr[i][1]);
+                        if ((mousePos.x - 8 < tempShape.shapearr[i][0] && mousePos.x + 8 > tempShape.shapearr[i][0]) && (mousePos.y - 8 < tempShape.shapearr[i][1] && mousePos.y + 8 > tempShape.shapearr[i][1])) {
+                            console.log("Clicked pencil line");
+                            return true;
+                        }
                     }
                     break;
                 default:
@@ -110,7 +139,6 @@ $(function(){
 
             }
         }
-        return shapesToMove;
     }
     //mousedown
     $('#my-canvas').on('mousedown', function(mouseEvent){
@@ -137,8 +165,8 @@ $(function(){
 
                 break;
             case drawio.availableShapes.MOVE:
-                /*toMove = getShape(mouse);
-                moveOrigin = mouse;*/
+                toMove = getShape(mouse);
+                moveOrigin = mouse;
         }
     });
     //mosemove
@@ -148,32 +176,12 @@ $(function(){
             drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
             drawio.selectedElement.resize(mouseEvent.offsetX, mouseEvent.offsetY);
         }
-        /*
-        if(drawio.selectedShape === "move" && toMove != null) {
-
-            currentMousePos = getMouse(mouseEvent);
-            var xOffset = moveOrigin.x - currentMousePos.x;
-            var yOffset = moveOrigin.y - currentMousePos.y;
-            console.log(moveOrigin);
-            console.log(currentMousePos.x, currentMousePos.y);
-            console.log(xOffset, yOffset);
-            for(let j = 0; j < toMove.length; j++) {
-                drawio.toMove[j].move(xOffset, yOffset);
-            }
-            drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
-        }*/
 
         drawCanvas();
 
 
     });
-/*
-    function moveRect(xOff, yOff, rect){
-        rect.position.x += xOff;
-        rect.position.y += yOff;
-    }
 
-*/
     //mouse goes out of the canvas, it should
     $('#my-canvas').on('mouseleave', function(mouseEvent){
         if(drawio.selectedElement != null){
