@@ -112,7 +112,7 @@ $(function(){
                 case "circle":
                     if(Math.sqrt(Math.pow(Math.abs(mousePos.x - tempShape.position.x), 2) + Math.pow(Math.abs(mousePos.y - tempShape.position.y), 2)) <= tempShape.rad) {
                         console.log("Clicked circle");
-                        return true;
+                        return drawio.shapes[i];
                     }
                     break;
                 case "text":
@@ -125,7 +125,7 @@ $(function(){
                 case "line":
                     if ((tempShape.position.x < mousePos.x < tempShape.x1 && tempShape.position.y < mousePos.y < tempShape.y1) || (tempShape.position.x > mousePos.x > tempShape.x1 && tempShape.position.y > mousePos.y > tempShape.y1)) {
                         console.log("Clicked line");
-                        return true;
+                        return drawio.shapes[i];
                     }
                     break;
                 case "pencil":
@@ -175,12 +175,12 @@ $(function(){
 
         }
     });
-
-    function moveShape(shape){
-
-        drawio.selectedShape = shape;
-
-        console.log("Shape:" + drawio.selectedShape);
+    function move(shape, mouse){
+        for(let i = 0; i < shape.length; i++){
+            shape[i].position.x = shape[i].position.x - mouse.x;
+            shape[i].position.y = shape[i].position.y - mouse.y;
+        }
+        return shape;
     }
 
     //mosemove
@@ -188,21 +188,18 @@ $(function(){
         var mouse = getMouse(mouseEvent);
         if(drawio.selectedElement){
             console.log("right place");
-            drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
+            //drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
             drawio.selectedElement.resize(mouseEvent.offsetX, mouseEvent.offsetY);
-
         }
-
         if(dragging ===true){
-            if(dragging == false){
-                return;
-            }
             toMove.position.x = mouse.x;
             toMove.position.y = mouse.y;
-            moveShape(toMove);
-            drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
-
+/*            var offsetX = toMove.position.x - toMove.x1;
+            var offsetY = toMove.position.y - toMove.y1;
+            toMove.x1 = offsetX;
+            toMove.y1 = offsetY;*/
         }
+        drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
         drawCanvas();
 
     });
@@ -226,18 +223,21 @@ $(function(){
     })
     //mouseup
     $('#my-canvas').on('mouseup', function(mouseEvent){
+        if(dragging){
+            dragging = false;
+        }
         if(drawio.selectedElement != null){
             if(!dragging){
             drawio.shapes.push(drawio.selectedElement);
-            toMove = null;
+            //toMove = null;
             }
             drawio.redo.length = 0; //make it so it's not able to redo after a pen has been written
             drawio.ctx.clearRect(0, 0, drawio.canvas.width, drawio.canvas.height);
-            drawCanvas()
-
-        }
-        dragging = false;
-       drawio.selectedElement = null;
+           // drawCanvas()
+            
+        }drawio.selectedElement = null;
+        
+        
     });
     //save image
     $("#save").on("click", function(){
